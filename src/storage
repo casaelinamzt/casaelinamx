@@ -1,0 +1,19 @@
+// Cliente de almacenamiento compartido: todos los dispositivos leen y
+// escriben los mismos datos a través de /api/kv (ver api/kv.js).
+export const storage = {
+  async get(key) {
+    const res = await fetch(`/api/kv?key=${encodeURIComponent(key)}`);
+    if (!res.ok) throw new Error("Error al leer datos");
+    const data = await res.json();
+    return data.value ?? null;
+  },
+  async set(key, value) {
+    const res = await fetch("/api/kv", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key, value }),
+    });
+    if (!res.ok) throw new Error("Error al guardar datos");
+    return res.json();
+  },
+};
